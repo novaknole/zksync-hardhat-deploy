@@ -1,16 +1,25 @@
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
+
+import {HardhatRuntimeEnvironment} from 'hardhat/types';
+import {extendEnvironment, HardhatUserConfig, task} from 'hardhat/config';
+
+import '@nomicfoundation/hardhat-chai-matchers';
+import '@matterlabs/hardhat-zksync-deploy';
+import '@matterlabs/hardhat-zksync-solc';
+import '@matterlabs/hardhat-zksync-node';
+import 'hardhat-deploy';
 
 
+// If you're running on zksync, import the below
+// import '@matterlabs/hardhat-zksync-upgradable';
+// import '@matterlabs/hardhat-zksync-ethers';
+// import '@matterlabs/hardhat-zksync-verify';
 
-import {  HardhatUserConfig } from "hardhat/config";
+// import '@nomicfoundation/hardhat-verify'
+// import '@openzeppelin/hardhat-upgrades'
 
-// import "hardhat-deploy";
-
-import "@matterlabs/hardhat-zksync-solc";
-import "@matterlabs/hardhat-zksync-deploy";
-import "@matterlabs/hardhat-zksync-node";
-// import '@nomicfoundation/hardhat-chai-matchers';
-import "@nomicfoundation/hardhat-chai-matchers"
 dotenv.config();
 
 const config: HardhatUserConfig = {
@@ -20,7 +29,7 @@ const config: HardhatUserConfig = {
     settings: {},
   },
   solidity: {
-    version: "0.8.17",
+    version: "0.8.18",
     settings: {
       optimizer: {
         enabled: true,
@@ -33,7 +42,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  defaultNetwork: "hardhat",
+  defaultNetwork: "zkSyncLocal",
   networks: {
     hardhat: {
       throwOnTransactionFailures: true,
@@ -42,7 +51,7 @@ const config: HardhatUserConfig = {
       gasPrice: 80000000000,
       allowUnlimitedContractSize: true,
       // deploy: ["./deploy"],
-      zksync: true
+      // zksync: true
     },
     zkSyncLocal: {
       url: "http://127.0.0.1:8011",
@@ -54,6 +63,57 @@ const config: HardhatUserConfig = {
         // '0xac1e735be8536c6534bb4f17f06f6afc73b2b5ba84ac2cfb12f7461b20c0bbe3'
       ],
     },
+    // zkTestnet: {
+    //   url: 'https://sepolia.era.zksync.dev',
+    //   ethNetwork: 'sepolia',
+    //   zksync: true,
+    //   verifyURL:
+    //     'https://explorer.sepolia.era.zksync.dev/contract_verification',
+    //   deploy: ['./deploy/new', './deploy/verification'],
+    //   accounts: ['0xf8880c7e20013925e5cd4ebb440de9120aabab51e7fef5f0e23e169b53196310'],
+    //   forceDeploy: true,
+    // },
+    // zkMainnet: {
+    //   url: 'https://mainnet.era.zksync.io',
+    //   ethNetwork: 'mainnet',
+    //   zksync: true,
+    //   verifyURL:
+    //     'https://zksync2-mainnet-explorer.zksync.io/contract_verification',
+    //   deploy: ['./deploy/new', './deploy/verification'],
+    //   accounts: ['0xf8880c7e20013925e5cd4ebb440de9120aabab51e7fef5f0e23e169b53196310'],
+    //   forceDeploy: true,
+    // },
+    holesky: {
+      chainId: 17000,
+      url: "https://holesky.infura.io/v3/7a03fcb37be7479da06f92c5117afd47",
+      deploy: ["./deploy/new", "./deploy/verification"],
+      accounts: ['0xf8880c7e20013925e5cd4ebb440de9120aabab51e7fef5f0e23e169b53196310'],
+    },
+    sepolia: {
+      chainId: 11155111,
+      url: "https://sepolia.infura.io/v3/7a03fcb37be7479da06f92c5117afd47",
+      accounts: ['0xf8880c7e20013925e5cd4ebb440de9120aabab51e7fef5f0e23e169b53196310'],
+    },
+    mainnet: {
+      chainId: 1,
+      url: "https://mainnet.infura.io/v3/7a03fcb37be7479da06f92c5117afd47",
+      accounts: ['0xf8880c7e20013925e5cd4ebb440de9120aabab51e7fef5f0e23e169b53196310'],
+    },
+    polygon: {
+      url: "https://polygon-mainnet.infura.io/v3/7a03fcb37be7479da06f92c5117afd47",
+      chainId: 137,
+      accounts: ['0xf8880c7e20013925e5cd4ebb440de9120aabab51e7fef5f0e23e169b53196310'],
+    },
+    baseMainnet: {
+      url: "https://base-mainnet.infura.io/v3/481a4cdc7c774286b8627f21c6827f48",
+      chainId: 8453,
+      accounts: ['0xf8880c7e20013925e5cd4ebb440de9120aabab51e7fef5f0e23e169b53196310'],
+    },
+    arbitrum: {
+      url: "https://arbitrum-mainnet.infura.io/v3/7a03fcb37be7479da06f92c5117afd47",
+      chainId: 42161,
+      accounts: ['0xf8880c7e20013925e5cd4ebb440de9120aabab51e7fef5f0e23e169b53196310'],
+    }
   },
   namedAccounts: {
     deployer: 0,
@@ -64,6 +124,9 @@ const config: HardhatUserConfig = {
     cache: "./build/cache",
     artifacts: "./build/artifacts",
     deploy: "./deploy",
+  },
+  mocha: {
+    timeout: 500_000, // 90 seconds // increase the timeout for subdomain validation tests
   },
 };
 
