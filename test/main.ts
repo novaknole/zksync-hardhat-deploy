@@ -5,6 +5,12 @@ describe.only("Binary search", function () {
 
     it("here", async () => {
         // ether
+
+        if(process.env.blax) {
+            console.log("oe");
+        } else{
+            console.log("ae");
+        }
         
         // console.log(ethers.utils.toUtf8String(
         //     ethers.utils.arrayify("0x697066733a2f2f516d4e6357616a506367596f7641466d61437041374e534a794a4454695062516b4d446d364d74325963466a3442")
